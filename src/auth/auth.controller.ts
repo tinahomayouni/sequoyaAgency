@@ -5,13 +5,9 @@ import {
   Body,
   HttpStatus,
   HttpException,
-  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserReqDto } from './dto/user.request.dto';
-import { RolesGuard } from './guards/roles.guard';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { AdminGuard } from './guards/admin.guard';
 
 @Controller()
 export class AuthController {
@@ -50,18 +46,5 @@ export class AuthController {
         HttpStatus.UNAUTHORIZED,
       );
     }
-  }
-  @Post('private-route')
-  @UseGuards(RolesGuard)
-  async privateRoute() {
-    // This route can only be accessed by users with a valid JWT token
-    return { message: 'Private route accessed successfully' };
-  }
-
-  @Post('admin-route')
-  @UseGuards(AdminGuard)
-  async adminRoute() {
-    // This route can only be accessed by users with the 'admin' role
-    return { message: 'Admin route accessed successfully' };
   }
 }

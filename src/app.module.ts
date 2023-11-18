@@ -3,6 +3,8 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
+import { UserPanelModule } from './user-panel/user-panel.module';
+import { AdminPanelModule } from './admin-panel/admin-panel.module';
 
 @Module({
   imports: [
@@ -13,6 +15,8 @@ import { JwtModule } from '@nestjs/jwt';
 
     // Import the AuthModule which contains the authentication-related components
     AuthModule,
+    AdminPanelModule,
+    UserPanelModule,
 
     // Configure JWT authentication
     JwtModule.register({

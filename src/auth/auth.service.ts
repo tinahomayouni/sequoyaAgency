@@ -35,13 +35,18 @@ export class AuthService {
       isPlanActive: true,
       order: 'default',
       orderDate: new Date(),
-      role: role || 'user', // Use the provided role or default to 'user'
+      role: role, // Use the provided role or default to 'user'
     });
 
     // Save the user to the database
     return await newUser.save();
   }
-  async login(userReqDto: UserReqDto): Promise<{ accessToken: string }> {
+  async login(userReqDto: UserReqDto): Promise<{
+    accessToken: string;
+    role: string;
+    plan: string;
+    username: string;
+  }> {
     const { email, password } = userReqDto;
 
     // Find the user by email
@@ -50,10 +55,21 @@ export class AuthService {
     // Check if the user exists and the password is correct
     if (user && (await bcrypt.compare(password, user.password))) {
       // Generate a JWT token
-      const payload = { username: user.username, sub: user._id };
+      const payload = {
+        username: user.username,
+        sub: user._id,
+        role: user.role,
+        plan: user.plan,
+      };
+
       const accessToken = this.jwtService.sign(payload);
 
-      return { accessToken };
+      return {
+        accessToken,
+        role: user.role,
+        plan: user.plan,
+        username: user.username,
+      };
     }
 
     // If the user does not exist or the password is incorrect, throw an error
