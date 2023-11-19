@@ -17,12 +17,6 @@ import { AdminPanelModule } from './admin-panel/admin-panel.module';
     AuthModule,
     AdminPanelModule,
     UserPanelModule,
-
-    // Configure JWT authentication
-    JwtModule.register({
-      secret: 'your-secret-key', // Change this to a more secure secret
-      signOptions: { expiresIn: '1h' }, // Set the expiration time for the token
-    }),
   ],
 })
 export class AppModule {}
