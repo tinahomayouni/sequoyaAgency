@@ -4,7 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { UserPanelModule } from './user-panel/user-panel.module';
-import { AdminPanelModule } from './admin-panel/admin-panel.module';
+import { BackofficeModule } from './backoffice/backoffice.module';
 
 @Module({
   imports: [
@@ -15,7 +15,7 @@ import { AdminPanelModule } from './admin-panel/admin-panel.module';
 
     // Import the AuthModule which contains the authentication-related components
     AuthModule,
-    AdminPanelModule,
+    BackofficeModule,
     UserPanelModule,
   ],
 })

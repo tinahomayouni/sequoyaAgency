@@ -1,11 +1,11 @@
-// src/admin-panel/admin-panel.service.ts
+// src/backoffice/backoffice.service.ts
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from 'src/auth/interfaces/user.interface';
 
 @Injectable()
-export class AdminPanelService {
+export class BackofficeService {
   constructor(@InjectModel('User') private readonly userModel: Model<User>) {} //why?
 
   async getAllUsersWithPlansAndOrderTimes() {
