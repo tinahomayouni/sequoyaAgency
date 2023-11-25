@@ -5,6 +5,8 @@ import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { UserPanelModule } from './user-panel/user-panel.module';
 import { BackofficeModule } from './backoffice/backoffice.module';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './auth/guards/roles.guard';
 
 @Module({
   imports: [
