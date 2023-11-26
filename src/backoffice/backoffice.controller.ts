@@ -15,8 +15,6 @@ export class BackofficeController {
   @Roles('admin')
   @UseGuards(JwtAuthGuard, RolesGuard)
   async privateRoute(@Request() req) {
-    console.log('all user before func');
-
     return await this.backofficeService.getAllUsersWithPlansAndOrderTimes();
   }
 }

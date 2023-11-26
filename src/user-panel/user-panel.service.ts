@@ -5,6 +5,7 @@ import { Injectable } from '@nestjs/common';
 export class UserPanelService {
   async showUserDetails(userDetails: any): Promise<any> {
     // Implement your logic to show user details
+    console.log(userDetails, 'userDetails');
     return {
       username: userDetails.username,
       role: userDetails.role,
