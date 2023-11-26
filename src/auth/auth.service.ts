@@ -5,7 +5,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User } from './interfaces/user.interface';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { UserReqDto } from './dto/user.request.dto';
+import { UserReqSignUpDto } from './dto/user.request.signup.dto';
+import { UserReqLoginDto } from './dto/user.request.login.dto';
 
 @Injectable()
 export class AuthService {
@@ -14,8 +15,8 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signUp(userRequestDto: UserReqDto): Promise<User> {
-    const { username, email, password, role } = userRequestDto;
+  async signUp(userRequestSignUpDto: UserReqSignUpDto): Promise<User> {
+    const { username, email, password, role } = userRequestSignUpDto;
 
     // Check if the user already exists
     const existingUser = await this.userModel.findOne({ email });
@@ -41,13 +42,13 @@ export class AuthService {
     // Save the user to the database
     return await newUser.save();
   }
-  async login(userReqDto: UserReqDto): Promise<{
+  async login(userReqLoginDto: UserReqLoginDto): Promise<{
     accessToken: string;
     role: string;
     plan: string;
     username: string;
   }> {
-    const { email, password } = userReqDto;
+    const { email, password } = userReqLoginDto;
 
     // Find the user by email
     const user = await this.userModel.findOne({ email });

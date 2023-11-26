@@ -8,7 +8,7 @@ import {
   IsIn,
 } from 'class-validator';
 
-export class UserReqDto {
+export class UserReqSignUpDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty({ example: 'tinaHoma', description: 'The username of the user' })

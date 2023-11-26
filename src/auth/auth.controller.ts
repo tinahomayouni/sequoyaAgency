@@ -7,16 +7,17 @@ import {
   HttpException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { UserReqDto } from './dto/user.request.dto';
+import { UserReqLoginDto } from './dto/user.request.login.dto';
+import { UserReqSignUpDto } from './dto/user.request.signup.dto';
 
 @Controller()
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('signup')
-  async signUp(@Body() userRequestDto: UserReqDto) {
+  async signUp(@Body() userRequestSignUpDto: UserReqSignUpDto) {
     try {
-      const user = await this.authService.signUp(userRequestDto);
+      const user = await this.authService.signUp(userRequestSignUpDto);
       return {
         message: 'User registered successfully',
         user,
@@ -33,9 +34,9 @@ export class AuthController {
   }
 
   @Post('login')
-  async login(@Body() userReqDto: UserReqDto) {
+  async login(@Body() userRequestLoginDto: UserReqLoginDto) {
     try {
-      const result = await this.authService.login(userReqDto);
+      const result = await this.authService.login(userRequestLoginDto);
       return result;
     } catch (error) {
       throw new HttpException(
