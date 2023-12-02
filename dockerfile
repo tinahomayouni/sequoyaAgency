@@ -2,7 +2,7 @@
 FROM node:16
 
 # Set the working directory in the container
-WORKDIR /Users/tina747/projects/seq-agency/src/app
+WORKDIR /etc/app
 
 # Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
@@ -15,6 +15,7 @@ COPY . .
 
 # Expose the port that your Nest.js application will run on
 EXPOSE 3000
+# create images finish build
 
 # Define the command to run your application
 CMD ["npm", "start"]
