@@ -16,7 +16,7 @@ export class AuthService {
   ) {}
 
   async signUp(userRequestSignUpDto: UserReqSignUpDto): Promise<User> {
-    const { username, email, password, role } = userRequestSignUpDto;
+    const { username, email, password, role, plan } = userRequestSignUpDto;
 
     // Check if the user already exists
     const existingUser = await this.userModel.findOne({ email });
@@ -27,20 +27,56 @@ export class AuthService {
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create a new user with the specified role
+    // Define plan options based on the selected plan
+    let planOptions;
+    switch (plan) {
+      case 'gold':
+        planOptions = {
+          website: true,
+          businessCard: true,
+          flyer: true,
+          social: true,
+          support: '12month',
+        };
+        break;
+      case 'silver':
+        planOptions = {
+          website: true,
+          businessCard: true,
+          flyer: false,
+          social: false,
+          support: '6month',
+        };
+        break;
+      case 'bronze':
+      default:
+        planOptions = {
+          website: true,
+          businessCard: false,
+          flyer: false,
+          social: false,
+          support: '6month',
+        };
+        break;
+    }
+
+    // Create a new user with the specified plan and options
     const newUser = new this.userModel({
       username,
       email,
       password: hashedPassword,
-      plan: 'default',
-      isPlanActive: true,
+      plan,
+      planOptions,
+      isPlanActive: false, // Plan is not active until payment is made
       order: 'default',
       orderDate: new Date(),
-      role: role, // Use the provided role or default to 'user'
+      role: role || 'user', // Use the provided role or default to 'user'
     });
 
     // Save the user to the database
-    return await newUser.save();
+    const savedUser = await newUser.save();
+
+    return savedUser;
   }
   async login(userReqLoginDto: UserReqLoginDto): Promise<{
     accessToken: string;
