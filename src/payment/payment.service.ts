@@ -11,7 +11,7 @@ export class PaymentService {
       apiVersion: '2023-10-16',
     });
   }
-  async createCheckoutSession() {
+  async createCheckoutSession(user) {
     console.log('in');
 
     const session = await this.stripe.checkout.sessions.create({

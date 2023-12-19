@@ -7,9 +7,12 @@ import { PaymentService } from './payment.service';
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
   @Post('create-checkout-session')
-  async createCheckoutSession() {
+  async createCheckoutSession(
+    @Body(new ValidationPipe()) checkoutSessionDto: CheckoutSessionDto,
+  ) {
     console.log('before');
-    const session = await this.paymentService.createCheckoutSession();
+    const session =
+      await this.paymentService.createCheckoutSession(checkoutSessionDto);
     console.log('after');
     return session;
   }
