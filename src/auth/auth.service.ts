@@ -1,5 +1,5 @@
 // src/auth/auth.service.ts
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpStatus, HttpException } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './interfaces/user.interface';
@@ -7,77 +7,99 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { UserReqSignUpDto } from './dto/user.request.signup.dto';
 import { UserReqLoginDto } from './dto/user.request.login.dto';
+import { PaymentService } from '../payment/payment.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel('User') private readonly userModel: Model<User>,
     private readonly jwtService: JwtService,
+    private readonly paymentService: PaymentService,
   ) {}
 
   async signUp(userRequestSignUpDto: UserReqSignUpDto): Promise<User> {
-    const { username, email, password, role, plan } = userRequestSignUpDto;
+    const { username, email, password, plan, paymentMethodId } =
+      userRequestSignUpDto;
 
     // Check if the user already exists
     const existingUser = await this.userModel.findOne({ email });
     if (existingUser) {
-      throw new Error('User with this email already exists');
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'User with this email already exists',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Define plan options based on the selected plan
-    let planOptions;
-    switch (plan) {
-      case 'gold':
-        planOptions = {
-          website: true,
-          businessCard: true,
-          flyer: true,
-          social: true,
-          support: '12month',
-        };
-        break;
-      case 'silver':
-        planOptions = {
-          website: true,
-          businessCard: true,
-          flyer: false,
-          social: false,
-          support: '6month',
-        };
-        break;
-      case 'bronze':
-      default:
-        planOptions = {
-          website: true,
-          businessCard: false,
-          flyer: false,
-          social: false,
-          support: '6month',
-        };
-        break;
+    try {
+      // Create a new user in the database
+      const newUser = new this.userModel({
+        username,
+        email,
+        password: hashedPassword,
+        role: 'user',
+        plan,
+      });
+
+      // Save the user to the database
+      await newUser.save();
+
+      // Create a customer in Stripe
+      const customer = await this.paymentService.createCustomer(email);
+
+      // Calculate the amount based on the selected plan
+      const amount = this.calculateAmountBasedOnPlan(plan);
+
+      // Create a payment intent
+      const paymentIntent = await this.paymentService.createPaymentIntent(
+        amount,
+        customer,
+        paymentMethodId,
+      );
+
+      // Confirm the payment intent
+      const confirmedPaymentIntent =
+        await this.paymentService.confirmPaymentIntent(paymentIntent.id);
+
+      // Check if the payment is successful
+      if (confirmedPaymentIntent.status === 'succeeded') {
+        // Update the user's plan or any other relevant information
+        newUser.plan = plan;
+        newUser.isPlanActive = true;
+        await newUser.save();
+
+        return newUser;
+      } else {
+        // Handle failed payment
+        throw new HttpException(
+          { status: HttpStatus.BAD_REQUEST, error: 'Payment failed' },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    } catch (error) {
+      console.error('Error during signup:', error.message);
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Signup failed',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
-
-    // Create a new user with the specified plan and options
-    const newUser = new this.userModel({
-      username,
-      email,
-      password: hashedPassword,
-      plan,
-      planOptions,
-      isPlanActive: false, // Plan is not active until payment is made
-      order: 'default',
-      orderDate: new Date(),
-      role: role || 'user', // Use the provided role or default to 'user'
-    });
-
-    // Save the user to the database
-    const savedUser = await newUser.save();
-
-    return savedUser;
   }
+
+  private calculateAmountBasedOnPlan(plan: string): number {
+    // Add logic to calculate the amount based on the selected plan
+    // Return the amount in cents (Stripe uses the smallest currency unit, e.g., cents for USD)
+    // This is a placeholder; you need to implement this based on your plan pricing
+    return 2000;
+  }
+
   async login(userReqLoginDto: UserReqLoginDto): Promise<{
     accessToken: string;
     role: string;
@@ -110,6 +132,9 @@ export class AuthService {
     }
 
     // If the user does not exist or the password is incorrect, throw an error
-    throw new Error('Invalid email or password');
+    throw new HttpException(
+      { status: HttpStatus.UNAUTHORIZED, error: 'Invalid email or password' },
+      HttpStatus.UNAUTHORIZED,
+    );
   }
 }

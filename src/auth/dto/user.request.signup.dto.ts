@@ -1,4 +1,4 @@
-// src/auth/dto/create-user.dto.ts
+// src/auth/dto/user.request.signup.dto.ts
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
@@ -43,4 +43,12 @@ export class UserReqSignUpDto {
     description: 'The role of the user (admin, user)',
   })
   readonly role: string = 'user'; // Provide a default value for role
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty({
+    example: 'pm_card_visa',
+    description: 'The payment method id from the frontend',
+  })
+  readonly paymentMethodId: string;
 }
