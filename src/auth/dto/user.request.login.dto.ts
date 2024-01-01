@@ -5,13 +5,13 @@ import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
 export class UserReqLoginDto {
   @IsNotEmpty()
   @IsString()
-  @ApiProperty({ example: 'tinaHoma', description: 'The username of the user' })
+  @ApiProperty({ example: 'somy', description: 'The username of the user' })
   readonly username: string;
 
   @IsNotEmpty()
   @IsEmail()
   @ApiProperty({
-    example: 'tinahomayouni@gmail.com',
+    example: 'somy@gmail.com',
     description: 'The email address of the user',
   })
   readonly email: string;
@@ -19,6 +19,9 @@ export class UserReqLoginDto {
   @IsNotEmpty()
   @IsString()
   @MinLength(6)
-  @ApiProperty({ example: '1234567', description: 'The password of the user' })
+  @ApiProperty({
+    example: 'somy7654321',
+    description: 'The password of the user',
+  })
   readonly password: string;
 }

@@ -11,7 +11,8 @@ export class PaymentService {
       apiVersion: '2023-10-16',
     });
   }
-  async createCheckoutSession() {
+
+  async createCheckoutSession(userId) {
     console.log('in');
 
     const session = await this.stripe.checkout.sessions.create({
@@ -22,13 +23,17 @@ export class PaymentService {
         },
       ],
       mode: 'payment',
-      success_url: `http://localhost/success.html`,
-      cancel_url: `http://localhost/cancel.html`,
+      success_url: `http://localhost/${userId}/success.html`,
+      cancel_url: 'http://localhost/cancel.html',
     });
-    console.log(session, 'session');
 
-    return session.url;
+    console.log('Stripe Session:', session);
+
+    return {
+      session,
+    };
   }
+
   async createCustomer(email: string): Promise<Stripe.Customer> {
     try {
       return await this.stripe.customers.create({
