@@ -8,7 +8,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import * as dotenv from 'dotenv';
-import { PaymentModule } from '../payment/payment.module';
+import { PaymentModule } from './payment/payment.module';
 
 dotenv.config();
 
