@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { AuthGuard } from '@nestjs/passport';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('payment')
@@ -20,15 +20,12 @@ export class PaymentController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard) // Use the JwtAuthGuard to ensure authentication
   async createCheckoutSession(@Request() req) {
-    console.log(req, 'before');
     if (!req.user.userId || !req.user.userId) {
       // Handle the case when user information is not available
       throw new UnauthorizedException('User information not available');
     }
-
     const userId = req.user.userId;
     const session = await this.paymentService.createCheckoutSession(userId);
-    console.log('after');
     return session.session['url'];
   }
 }

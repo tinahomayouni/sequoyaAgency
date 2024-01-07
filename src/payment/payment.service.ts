@@ -13,8 +13,6 @@ export class PaymentService {
   }
 
   async createCheckoutSession(userId) {
-    console.log('in');
-
     const session = await this.stripe.checkout.sessions.create({
       line_items: [
         {

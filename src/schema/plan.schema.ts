@@ -1,7 +1,8 @@
-// schema/users.schema.ts
-import * as mongoose from 'mongoose';
+import { Schema, model } from 'mongoose';
+import { PlanOptions } from './interfaces/plan-options.interface';
+import { Plan } from './interfaces/plan.interfaces';
 
-const PlanOptionsSchema = new mongoose.Schema({
+const PlanOptionsSchema = new Schema<PlanOptions>({
   website: Boolean,
   businessCard: Boolean,
   flyer: Boolean,
@@ -9,16 +10,13 @@ const PlanOptionsSchema = new mongoose.Schema({
   support: String,
 });
 
-export const UserSchema = new mongoose.Schema({
-  username: String,
-  email: String,
-  password: String,
-  plan: {
+export const PlanSchema = new Schema<Plan>({
+  type: {
     type: String,
     enum: ['gold', 'silver', 'bronze'],
     default: 'bronze',
   },
-  planOptions: {
+  options: {
     type: PlanOptionsSchema,
     default: {
       website: true,
@@ -28,8 +26,6 @@ export const UserSchema = new mongoose.Schema({
       support: '6month',
     },
   },
-  isPlanActive: Boolean,
-  order: String,
-  orderDate: Date,
-  role: String,
 });
+
+//export const PlanModel = model<Plan>('Plan', PlanSchema); why??

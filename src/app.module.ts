@@ -4,7 +4,7 @@ import { AuthModule } from './auth/auth.module';
 import { UserPanelModule } from './user-panel/user-panel.module';
 import { BackofficeModule } from './backoffice/backoffice.module';
 import { DatabaseModule } from './database/database.module';
-import { PaymentModule } from './auth/payment/payment.module';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
