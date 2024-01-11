@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
-import { PlanOptions } from './interfaces/plan-options.interface';
-import { Plan } from './interfaces/plan.interfaces';
+import { PlanOptions } from '../payment/schema/plan-options.interface';
+import { Plan } from '../payment/schema/plan.interfaces';
 
 const PlanOptionsSchema = new Schema<PlanOptions>({
   website: Boolean,
@@ -27,5 +27,3 @@ export const PlanSchema = new Schema<Plan>({
     },
   },
 });
-
-//export const PlanModel = model<Plan>('Plan', PlanSchema); why??

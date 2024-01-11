@@ -5,11 +5,11 @@ import { PaymentController } from './payment.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UserSchema } from '../schema/users.schema';
+import { PlanSchema } from 'src/schema/plan.schema';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
+    MongooseModule.forFeature([{ name: 'Plan', schema: PlanSchema }]),
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,

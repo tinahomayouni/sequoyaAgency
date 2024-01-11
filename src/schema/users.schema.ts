@@ -1,12 +1,13 @@
 // schema/user.schema.ts
 import * as mongoose from 'mongoose';
 
+const ObjectId = mongoose.Schema.Types.ObjectId;
 export const UserSchema = new mongoose.Schema({
   username: String,
   email: String,
   password: String,
   plan: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: ObjectId,
     ref: 'Plan',
   },
   isPlanActive: Boolean,

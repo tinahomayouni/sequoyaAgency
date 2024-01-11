@@ -30,6 +30,7 @@ async function bootstrap() {
       whitelist: true, // remove non-whitelisted properties
       forbidNonWhitelisted: true, // throw an error on non-whitelisted properties
       transform: true, // transform incoming data to match the DTO's types
+      transformOptions: { enableImplicitConversion: true },
       validationError: { target: false }, // return entire validation error object
     }),
   );

@@ -21,8 +21,8 @@ export class PaymentService {
         },
       ],
       mode: 'payment',
-      success_url: `http://localhost/${userId}/success.html`,
-      cancel_url: `http://localhost/${userId}/cancel.html`,
+      success_url: `http://localhost/success:${userId}`,
+      cancel_url: `http://localhost/cancel:${userId}`,
     });
 
     console.log('Stripe Session:', session);
