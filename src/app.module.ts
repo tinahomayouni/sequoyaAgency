@@ -2,7 +2,7 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
 import { UserPanelModule } from './user-panel/user-panel.module';
-import { BackofficeModule } from './backoffice/backoffice.module';
+//import { BackofficeModule } from './backoffice/backoffice.module';
 import { DatabaseModule } from './database/database.module';
 import { PaymentModule } from './payment/payment.module';
 
@@ -18,7 +18,7 @@ import { PaymentModule } from './payment/payment.module';
     PaymentModule,
 
     // Import the other modules as needed
-    BackofficeModule,
+    //BackofficeModule,
     UserPanelModule,
   ],
 })

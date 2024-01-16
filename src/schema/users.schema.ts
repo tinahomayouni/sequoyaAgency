@@ -1,17 +1,34 @@
-// schema/user.schema.ts
-import * as mongoose from 'mongoose';
+// src/schema/users.schema.ts
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import mongoose, { Document } from 'mongoose';
+import { Plan } from './plan.schema';
 
 const ObjectId = mongoose.Schema.Types.ObjectId;
-export const UserSchema = new mongoose.Schema({
-  username: String,
-  email: String,
-  password: String,
-  plan: {
-    type: ObjectId,
-    ref: 'Plan',
-  },
-  isPlanActive: Boolean,
-  order: String,
-  orderDate: Date,
-  role: String,
-});
+@Schema()
+export class User extends Document {
+  @Prop()
+  username: string;
+
+  @Prop()
+  email: string;
+
+  @Prop()
+  password: string;
+
+  @Prop({ type: ObjectId, ref: Plan.name }) // Specify the type for the plan field
+  plan: Plan | string;
+
+  @Prop()
+  isPlanActive: boolean;
+
+  @Prop()
+  order: string;
+
+  @Prop()
+  orderDate: Date;
+
+  @Prop({ type: String, default: 'user' })
+  role: string;
+}
+
+export const UserSchema = SchemaFactory.createForClass(User);

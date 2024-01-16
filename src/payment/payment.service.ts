@@ -1,12 +1,13 @@
 // payment/payment.service.ts
 import { Injectable } from '@nestjs/common';
+import { UserService } from 'src/user/user.service';
 import Stripe from 'stripe';
 
 @Injectable()
 export class PaymentService {
   private readonly stripe;
 
-  constructor() {
+  constructor(private readonly userService: UserService) {
     this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
       apiVersion: '2023-10-16',
     });
@@ -21,8 +22,8 @@ export class PaymentService {
         },
       ],
       mode: 'payment',
-      success_url: `http://localhost/success:${userId}`,
-      cancel_url: `http://localhost/cancel:${userId}`,
+      success_url: `http://localhost:3000/api/payment/success/${userId}`,
+      cancel_url: `http://localhost/cancel/${userId}`,
     });
 
     console.log('Stripe Session:', session);
@@ -30,6 +31,26 @@ export class PaymentService {
     return {
       session,
     };
+  }
+  async successPayment(userId: string) {
+    try {
+      const user = await this.userService.findById(userId);
+      if (!user) {
+        throw new Error(`User not found with ID: ${userId}`);
+      }
+      if (user.plan && user.isPlanActive) {
+        await user.save();
+        console.log(`Update user after payment: ${userId}`);
+      }
+    } catch (error) {
+      console.error('Error processing successful payment:', error.message);
+      throw new Error('Payment processing failed');
+    }
+  }
+
+  async cancelPayment(userId: string) {
+    // Logic for cancellation (if needed)
+    console.log(`Payment canceled for user: ${userId}`);
   }
 
   async createCustomer(email: string): Promise<Stripe.Customer> {

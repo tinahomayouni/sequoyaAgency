@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { User } from 'src/schema/interfaces/user.interface';
+import { User } from 'src/schema/users.schema';
 
 Injectable();
 export class UserService {
@@ -23,47 +23,47 @@ export class UserService {
       throw error;
     }
   }
-  async getUser(
-    username?: string,
-    role?: string,
-    plan?: string,
-    orderDate?: Date,
-  ) {
+  async findById(userId: string) {
     try {
-      // Build the filter object based on provided parameters
-      const filter: any = {};
-      if (username) filter.username = username;
-      if (role) filter.role = role;
-      if (plan) filter.plan = plan;
-      if (orderDate) filter.orderDate = orderDate;
-
-      // Retrieve users from MongoDB Atlas based on the filter
-      const users = await this.userModel.find(filter, {
+      const user = await this.userModel.findById(userId, {
         username: 1,
         role: 1,
         plan: 1,
         orderDate: 1,
       });
 
-      console.log('Filtered users:', users);
+      console.log('User by ID:', user);
 
-      // Your logic to process or return the filtered users as needed
-      return users;
+      // Your logic to process or return the user as needed
+      return user;
     } catch (error) {
-      console.error('Error retrieving users:', error);
+      console.error('Error retrieving user by ID:', error);
       throw error;
     }
   }
+
+  async findByEmail(email: string) {
+    try {
+      const user = await this.userModel.findOne(
+        { email },
+        {
+          username: 1,
+          role: 1,
+          plan: 1,
+          orderDate: 1,
+        },
+      );
+
+      console.log('User by email:', user);
+
+      // Your logic to process or return the user as needed
+      return user;
+    } catch (error) {
+      console.error('Error retrieving user by email:', error);
+      throw error;
+    }
+  }
+  async createUser(username, email, hashedPassword): Promise<User> {
+    return await this.userModel.create({ email, username, hashedPassword });
+  }
 }
-
-// Get users with a specific username
-//const usersByUsername = await getUser('desiredUsername');
-
-// Get users with a specific role
-//const usersByRole = await getUser(undefined, 'desiredRole');
-
-// Get users with a specific plan
-//const usersByPlan = await getUser(undefined, undefined, 'desiredPlan');
-
-// Get users with a specific orderDate
-//const usersByOrderDate = await getUser(undefined, undefined, undefined, new Date('desiredOrderDate'));
